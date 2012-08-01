@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<overlay id="wcs-less-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<script type="application/x-javascript" src="chrome://wsc-less/content/less-komodo.js" />
+
+</overlay>

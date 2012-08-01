@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Komodo Project File - DO NOT EDIT -->
+<project id="09f349e0-128f-4a43-8af7-847af72f1a11" kpf_version="5" name="less.komodoproject">
+<preference-set idref="09f349e0-128f-4a43-8af7-847af72f1a11">
+  <boolean id="configured">1</boolean>
+  <string relative="path" id="less_save_location"></string>
+</preference-set>
+</project>

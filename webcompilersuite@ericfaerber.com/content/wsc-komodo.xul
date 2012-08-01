@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<overlay id="wcs-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<script type="application/x-javascript" src="chrome://webcompilersuite/content/wsc-komodo.js" />
+
+	<menupopup id="editorContextMenu">
+		<menu id="wsc-context-menu" label="Web Compiler Suite">
+			<menupopup id="wsc-context-menu-popup">
+			</menupopup>
+		</menu>
+	</menupopup>
+</overlay>

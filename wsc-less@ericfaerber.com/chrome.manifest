@@ -1,0 +1,3 @@
+content wsc-less content/
+
+overlay chrome://webcompilersuite/content/wsc-komodo.xul chrome://wsc-less/content/less-komodo.xul
