@@ -21,148 +21,136 @@
 
 	xtk.load('chrome://wsc-less/content/less.min.js');
 
-	if (!ko.extensions) ko.extensions = {};
-	if (!ko.extensions.wsc) ko.extensions.wsc = {};
-	if (!ko.extensions.wsc.compilers) ko.extensions.wsc.compilers = {};
+	var lessCompiler = new ko.extensions.wsc.classes.Compiler();
+
+	lessCompiler.id = 'less';
+	lessCompiler.name = 'LESS';
 
 	/**
-	 * The LESS Compiler extensions
+	 * Compiles a file
+	 *
+	 * @returns void
 	 */
-	var lessCompiler = (function() {
-		var _self = this;
+	lessCompiler.compileFile = function() {
+		lessCompiler.notify("Compiling file.");
 
-		this.id = 'lessMenu';
-		this.name = 'LESS';
-		this.menu = [];
-
-		/**
-		 * Compiles a file
-		 *
-		 * @returns void
-		 */
-		this.compileFile = function() {
-			setNotification("Compiling file.");
-
-			var buffer = ko.extensions.wsc.getBuffer();
+		var buffer = lessCompiler.getBuffer();
 
 
-			setNotification("File compiled successfully.");
-		};
+		lessCompiler.notify("File compiled successfully.");
+	};
 
-		/**
-		 * Compiles the current buffer
-		 *
-		 * @returns void
-		 */
-		this.compileBuffer = function() {
-			setNotification("Compiling buffer.");
+	/**
+	 * Compiles the current buffer
+	 *
+	 * @returns void
+	 */
+	lessCompiler.compileBuffer = function() {
+		lessCompiler.notify("Compiling buffer.");
 
-			var buffer = ko.extensions.wsc.getBuffer();
+		var buffer = lessCompiler.getBuffer();
 
-			_self._compileStr(buffer, function(css) {
-				ko.extensions.wsc.setBuffer(css);
+		lessCompiler._compileStr(buffer, function(css) {
+			lessCompiler.setBuffer(css);
 
-				setNotification("Buffer compiled successfully.");
-			});
-			
-		};
-
-		/**
-		 * Compiles the current selection
-		 *
-		 * @returns void
-		 */
-		this.compileSelection = function() {
-			setNotification("Compiling selection.");
-
-			var selection = ko.extensions.wsc.getSelection();
-			
-			_self._compileStr(selection, function(css) {
-				ko.extensions.wsc.setSelection(css);
-	
-				setNotification("Selection compiled successfully.");
-			});
-		};
-		
-		/**
-		 * Compiles a string
-		 * 
-		 * @param   {String} str      
-		 * @param   {Function} callback
-		 * 
-		 * @returns void
-		 */
-		this._compileStr = function(str, compress, callback) {
-			if (typeof compress === "function") {
-				callback = compress;
-				compress = false;
-			}
-
-			var parser = new(less.Parser);
-
-			try {
-				parser.parse(str, function (err, tree) {
-					if (err) {
-						setNotification(err.message, ko.extensions.wsc.severity.ERROR);
-					} else if (typeof callback === "function") {
-						callback.call(_self, tree.toCSS());
-					}
-				});
-			} catch (err) {
-				setNotification("Error compiling", ko.extensions.wsc.severity.ERROR);
-				ko.extensions.wsc.log(_self.name, ko.extensions.wsc.severity.ERROR, "Line: " + err.line + "    Column: " + err.column);
-				ko.extensions.wsc.log(_self.name, ko.extensions.wsc.severity.ERROR, err.message);
-			}
-		};
-
-		/**
-		 * Add the menus
-		 */
-		// compile file menu
-		var menuItemCompileFile = xtk.domutils.newElement('menuitem', {
-			'label'	: 'Compile File',
-			'class'	: 'menu-iconic-wide'
+			lessCompiler.notify("Buffer compiled successfully.");
 		});
-		menuItemCompileFile.onclick = this.compileFile;
-		this.menu.push(menuItemCompileFile);
 
-		// compile buffer menu
-		var menuItemCompileBuffer = xtk.domutils.newElement('menuitem', {
-			'label'	: 'Compile Buffer',
-			'class'	: 'menu-iconic-wide'
+	};
+
+	/**
+	 * Compiles the current selection
+	 *
+	 * @returns void
+	 */
+	lessCompiler.compileSelection = function() {
+		lessCompiler.notify("Compiling selection.");
+
+		var selection = lessCompiler.getSelection();
+
+		lessCompiler._compileStr(selection, function(css) {
+			lessCompiler.setSelection(css);
+
+			lessCompiler.notify("Selection compiled successfully.");
 		});
-		menuItemCompileBuffer.onclick = this.compileBuffer;
-		this.menu.push(menuItemCompileBuffer);
+	};
 
-		// compile selection menu
-		var menuItemCompileSelection = xtk.domutils.newElement('menuitem', {
-			'label'	: 'Compile Selection',
-			'class'	: 'menu-iconic-wide'
-		});
-		menuItemCompileSelection.onclick = this.compileSelection;
-		this.menu.push(menuItemCompileSelection);
-
-		/**
-		 * Help method to set notifications
-		 *
-		 * @param   {String} message
-		 * @param   {Int} severity
-		 *
-		 * @returns void
-		 */
-		function setNotification(message, severity) {
-			ko.extensions.wsc.setNotification(_self.name, [_self.name], _self + '_notification', severity, message);
-
-			if (severity === ko.extensions.wsc.severity.ERROR || severity === ko.extensions.wsc.severity.WARN) {
-				ko.extensions.wsc.log(_self.name, severity, message);
-			}
+	/**
+	 * Compiles a string
+	 *
+	 * @param   {String} str
+	 * @param   {Function} callback
+	 *
+	 * @returns void
+	 */
+	lessCompiler._compileStr = function(str, compress, callback) {
+		if (typeof compress === "function") {
+			callback = compress;
+			compress = false;
 		}
 
-		return this;
-	})();
+		var parser = new(less.Parser);
+
+		try {
+			parser.parse(str, function (err, tree) {
+				if (err) {
+					lessCompiler.notify(err.message, lessCompiler.severity.ERROR);
+				} else if (typeof callback === "function") {
+					callback.call(lessCompiler, tree.toCSS());
+				}
+			});
+		} catch (err) {
+			lessCompiler.notify("Error compiling", lessCompiler.severity.ERROR);
+			lessCompiler.log(lessCompiler.name, lessCompiler.severity.ERROR, "Line: " + err.line + "    Column: " + err.column);
+			lessCompiler.log(lessCompiler.name, lessCompiler.severity.ERROR, err.message);
+		}
+	};
 
 	/**
-	 * Register the compiler
+	 * Add the menus
 	 */
-	ko.extensions.wsc.compilers.less = lessCompiler;
+	// compile file menu
+	var menuItemCompileFile = xtk.domutils.newElement('menuitem', {
+		'label'	: 'Compile File',
+		'class'	: 'menu-iconic-wide'
+	});
+	menuItemCompileFile.onclick = lessCompiler.compileFile;
+	lessCompiler.menu.push(menuItemCompileFile);
+
+	// compile buffer menu
+	var menuItemCompileBuffer = xtk.domutils.newElement('menuitem', {
+		'label'	: 'Compile Buffer',
+		'class'	: 'menu-iconic-wide'
+	});
+	menuItemCompileBuffer.onclick = lessCompiler.compileBuffer;
+	lessCompiler.menu.push(menuItemCompileBuffer);
+
+	// compile selection menu
+	var menuItemCompileSelection = xtk.domutils.newElement('menuitem', {
+		'label'	: 'Compile Selection',
+		'class'	: 'menu-iconic-wide'
+	});
+	menuItemCompileSelection.onclick = lessCompiler.compileSelection;
+	lessCompiler.menu.push(menuItemCompileSelection);
+
+	var registerLess = function() {
+		/**
+		* Register the compiler
+		*/
+		ko.extensions.wsc.lessCompiler = lessCompiler;
+
+		ko.extensions.wsc.registerCompiler('less', lessCompiler);
+	};
+
+	var obsSvc = Components.classes["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService);
+	var wsc_observer = {
+		observe: function(subject, topic, data) {
+			if (topic == "komodo-ui-started") {
+				registerLess();
+				obsSvc.removeObserver(wsc_observer, 'komodo-ui-started');
+			}
+		}
+	};
+
+	obsSvc.addObserver(wsc_observer, 'komodo-ui-started', false);
 })();
